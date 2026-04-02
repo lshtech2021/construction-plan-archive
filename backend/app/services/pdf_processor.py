@@ -110,4 +110,5 @@ class PDFProcessor:
             "thumbnail_path": thumbnail_object_name,
             "native_text": native_text,
             "has_native_text": bool(native_text),
+            "image_bytes": image_bytes,
         }

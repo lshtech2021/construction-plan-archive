@@ -4,8 +4,8 @@ import enum
 import uuid
 from typing import TYPE_CHECKING, Optional
 
-from sqlalchemy import Boolean, Enum, ForeignKey, Index, Integer, String, Text
-from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy import Boolean, Enum, Float, ForeignKey, Index, Integer, String, Text
+from sqlalchemy.dialects.postgresql import JSONB, UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.models.base import Base, TimestampMixin, UUIDPrimaryKeyMixin
@@ -90,6 +90,8 @@ class Sheet(Base, UUIDPrimaryKeyMixin, TimestampMixin):
     needs_human_review: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
     text_embedding_id: Mapped[Optional[str]] = mapped_column(String(500), nullable=True)
     image_embedding_id: Mapped[Optional[str]] = mapped_column(String(500), nullable=True)
+    extraction_metadata: Mapped[Optional[dict]] = mapped_column(JSONB, nullable=True)
+    processing_time_seconds: Mapped[Optional[float]] = mapped_column(Float, nullable=True)
 
     document: Mapped["Document"] = relationship("Document", back_populates="sheets")
 
