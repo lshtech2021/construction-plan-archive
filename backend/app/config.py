@@ -36,5 +36,23 @@ class Settings(BaseSettings):
     bucket_rendered_pages: str = "rendered-pages"
     bucket_thumbnails: str = "thumbnails"
 
+    # VLM settings
+    vlm_enabled: bool = False
+    vlm_provider: str = "openai"
+    vlm_model: str = "gpt-4o"
+    vlm_api_key: str = ""
+    vlm_api_base: str = ""
+    vlm_max_retries: int = 3
+    vlm_timeout_seconds: float = 60.0
+
+    # OCR settings
+    ocr_enabled: bool = True
+    ocr_denoise: bool = True
+
+    # Extraction pipeline settings
+    extraction_enabled: bool = True
+    table_extraction_enabled: bool = True
+    extraction_max_workers: int = 4
+
 
 settings = Settings()
