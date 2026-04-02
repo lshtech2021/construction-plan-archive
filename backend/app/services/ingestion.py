@@ -185,3 +185,23 @@ class IngestionService:
                 logger.error(
                     "Extraction failed for sheet page %d: %s", sheet.page_number, exc
                 )
+
+        # Trigger embedding indexing for all sheets after extraction (non-blocking)
+        await self._index_sheets(sheets)
+
+    async def _index_sheets(self, sheets: list[Sheet]) -> None:
+        """Trigger embedding generation for sheets. Failures do not propagate."""
+        try:
+            from app.services.indexing import indexing_service
+            for sheet in sheets:
+                if sheet.id is not None:
+                    try:
+                        await indexing_service.index_sheet(self.session, sheet.id)
+                    except Exception as exc:
+                        logger.warning(
+                            "Non-fatal: indexing failed for sheet page %d: %s",
+                            sheet.page_number,
+                            exc,
+                        )
+        except Exception as exc:
+            logger.warning("Non-fatal: sheet indexing step failed: %s", exc)

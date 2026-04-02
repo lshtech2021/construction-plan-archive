@@ -54,5 +54,25 @@ class Settings(BaseSettings):
     table_extraction_enabled: bool = True
     extraction_max_workers: int = 4
 
+    # Embedding settings
+    embedding_provider: str = "local"
+    embedding_model: str = "all-MiniLM-L6-v2"
+    embedding_api_key: str = ""
+    embedding_dimension: int = 384
+    image_embedding_model: str = "clip-ViT-B-32"
+    image_embedding_dimension: int = 512
+
+    # Qdrant collection names
+    qdrant_text_collection: str = "sheet_text_embeddings"
+    qdrant_image_collection: str = "sheet_image_embeddings"
+
+    # Search settings
+    search_default_limit: int = 20
+    search_max_limit: int = 100
+    search_semantic_weight: float = 0.7
+    search_keyword_weight: float = 0.3
+    search_min_score: float = 0.1
+    search_enable_reranking: bool = True
+
 
 settings = Settings()

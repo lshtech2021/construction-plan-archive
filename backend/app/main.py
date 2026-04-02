@@ -21,6 +21,15 @@ async def lifespan(app: FastAPI):
         logger.info("MinIO buckets ensured")
     except Exception as exc:
         logger.warning("Could not ensure MinIO buckets on startup: %s", exc)
+
+    # Startup: ensure Qdrant collections exist
+    try:
+        from app.services.search.vector_store import vector_store
+        await vector_store.ensure_collections()
+        logger.info("Qdrant collections ensured")
+    except Exception as exc:
+        logger.warning("Could not ensure Qdrant collections on startup: %s", exc)
+
     yield
 
 
