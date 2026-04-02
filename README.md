@@ -9,6 +9,14 @@ construction-plan-archive/
 ├── docker-compose.yml       # All infrastructure services
 ├── .env.example             # Environment variable template
 ├── README.md
+├── frontend/                # React 18 + Vite + TypeScript + Tailwind CSS
+│   ├── Dockerfile           # Multi-stage Node 20 build + nginx:alpine serve
+│   ├── nginx.conf           # SPA routing + /api proxy to backend
+│   ├── src/
+│   │   ├── api/             # Typed API client layer
+│   │   ├── components/      # Shared UI components + Layout
+│   │   └── pages/           # Route-level page components
+│   └── vite.config.ts       # Dev server with /api proxy
 └── backend/
     ├── Dockerfile           # Multi-stage Python 3.11 build
     ├── requirements.txt
@@ -50,6 +58,7 @@ construction-plan-archive/
 
 | Layer | Technology |
 |---|---|
+| Frontend | React 18, Vite, TypeScript, Tailwind CSS |
 | API | FastAPI, Uvicorn |
 | Database | PostgreSQL 16, SQLAlchemy (async), Alembic |
 | Cache / Queue | Redis 7 |
@@ -64,6 +73,7 @@ construction-plan-archive/
 
 - [Docker](https://docs.docker.com/get-docker/) ≥ 24
 - [Docker Compose](https://docs.docker.com/compose/) ≥ 2.20
+- [Node.js](https://nodejs.org/) ≥ 20 (for local frontend development)
 
 ## Quick Start
 
@@ -75,7 +85,7 @@ cd construction-plan-archive
 # 2. Copy and customise environment variables
 cp .env.example .env
 
-# 3. Start all services
+# 3. Start all services (including frontend at http://localhost:3000)
 docker compose up -d
 
 # 4. Run database migrations (inside the backend container)
@@ -83,6 +93,18 @@ docker compose exec backend alembic upgrade head
 
 # 5. Verify the API is healthy
 curl http://localhost:8000/api/health
+```
+
+- **Frontend**: http://localhost:3000
+- **Backend API**: http://localhost:8000
+- **API Docs**: http://localhost:8000/docs
+
+## Frontend Development
+
+```bash
+cd frontend
+npm install
+npm run dev     # starts at http://localhost:5173 with /api proxy to localhost:8000
 ```
 
 ## Environment Variables
@@ -102,6 +124,7 @@ curl http://localhost:8000/api/health
 | `ENVIRONMENT` | `development` | `development` or `production` |
 | `PDF_RENDER_DPI` | `300` | DPI for full-res page renders |
 | `THUMBNAIL_DPI` | `72` | DPI for thumbnail generation |
+| `FRONTEND_PORT` | `3000` | Host port for the frontend container |
 
 ## API Endpoints
 
@@ -119,6 +142,9 @@ curl http://localhost:8000/api/health
 | `GET` | `/api/documents/{id}/status` | Get processing status |
 | `GET` | `/api/documents/{id}/sheets` | List sheets (filterable) |
 | `GET` | `/api/sheets/{id}` | Get sheet detail |
+| `POST` | `/api/search` | Hybrid/semantic/keyword search |
+| `POST` | `/api/search/similar` | Find similar sheets |
+| `GET` | `/api/search/status` | Search index statistics |
 
 Interactive docs: http://localhost:8000/docs
 
@@ -127,6 +153,7 @@ Interactive docs: http://localhost:8000/docs
 ```bash
 # View logs for a specific service
 docker compose logs -f backend
+docker compose logs -f frontend
 
 # Restart backend after code changes
 docker compose restart backend
