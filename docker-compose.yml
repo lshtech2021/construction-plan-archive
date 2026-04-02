@@ -80,6 +80,14 @@ services:
       minio:
         condition: service_healthy
 
+  frontend:
+    build: ./frontend
+    restart: unless-stopped
+    ports:
+      - "${FRONTEND_PORT:-3000}:80"
+    depends_on:
+      - backend
+
 volumes:
   pgdata:
   redisdata:
