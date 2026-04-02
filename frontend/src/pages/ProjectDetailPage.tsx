@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { getProject, deleteProject } from '../api/projects';
 import { listDocuments, uploadDocument } from '../api/documents';
@@ -23,7 +23,7 @@ export function ProjectDetailPage() {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [deleting, setDeleting] = useState(false);
 
-  const fetchData = () => {
+  const fetchData = useCallback(() => {
     if (!id) return;
     setLoading(true);
     setError(null);
@@ -34,11 +34,11 @@ export function ProjectDetailPage() {
       })
       .catch((e: Error) => setError(e.message))
       .finally(() => setLoading(false));
-  };
+  }, [id]);
 
   useEffect(() => {
     fetchData();
-  }, [id]);
+  }, [fetchData]);
 
   const handleUpload = async (file: File) => {
     if (!id) return;

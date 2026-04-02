@@ -1,10 +1,10 @@
+import React from 'react';
+
 interface EmptyStateProps {
   title: string;
   description?: string;
   action?: React.ReactNode;
 }
-
-import React from 'react';
 
 export function EmptyState({ title, description, action }: EmptyStateProps) {
   return (
